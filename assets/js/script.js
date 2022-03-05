@@ -82,8 +82,6 @@ $("body").on("click", ".btn", function() {
       alert("Yes");
    }
 });
-$("#timer")
-var time = setInterval(function () {time.innerHTML += "Hello"}, 1000);
 
-addEventListener("load", landing);
+//addEventListener("load", landing);
 

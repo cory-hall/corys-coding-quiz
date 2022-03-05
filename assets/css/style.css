@@ -94,3 +94,25 @@ header p{
    background-color: rgb(255, 208, 0);
 }
 
+.score {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   align-items: center;
+   margin: 20% auto;
+   width: 80%;
+}
+
+.score h1 {
+   text-align: center;
+   font-size: 2rem;
+   padding-bottom: 20px;
+}
+
+#personal-score {
+   text-align: center;
+   margin: auto;
+   width: 100%;
+   font-size: 3rem;
+}
+
