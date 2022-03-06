@@ -79,7 +79,7 @@ header p{
    width: 80%;
 }
 
-.btn {
+.btn, .answer-btn {
    background-color: #06aed5;
    font-size: large;
    padding: 10px;
@@ -89,12 +89,13 @@ header p{
    border: none;
 }
 
+.answer-btn:hover,
 .btn:hover {
    transition: 0.7s;
    background-color: rgb(255, 208, 0);
 }
 
-.score {
+.end-page {
    display: flex;
    flex-wrap: wrap;
    justify-content: center;
@@ -103,10 +104,27 @@ header p{
    width: 80%;
 }
 
-.score h1 {
+.end-page h1 {
    text-align: center;
    font-size: 2rem;
    padding-bottom: 20px;
+}
+
+.end-page p {
+   width: 60%;
+   padding: 20px;
+   text-align: center;
+   font-size: 1.5rem;
+}
+
+.end-page .initials {
+   width: 40%;
+}
+
+.end-page .btn {
+   width: 50%;
+   text-align: center;
+   margin-top: 20px;
 }
 
 #personal-score {
@@ -116,3 +134,17 @@ header p{
    font-size: 3rem;
 }
 
+.high-scores {
+   text-align: center;
+   margin-top: 50px;
+}
+
+.high-scores h1 {
+   padding-bottom: 20px;
+}
+
+.high-scores li {
+   text-align: center;
+   padding: 10px;
+   list-style: none;
+}
