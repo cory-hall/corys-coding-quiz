@@ -10,7 +10,7 @@ https://cory-hall.github.io/corys-coding-quiz/
 No need to instal anything. Simply follow the link posted above to access to content.
 
 ## Screenshot
-/assets/images/week-4-challenge.png
+./assets/images/week-4-challenge.png
 
 ## Credit
 All work done by Cory Hall
