@@ -2,14 +2,9 @@ var count = 0;
 var initials = "";
 var score = null;
 var localHighScores = [];
+var userScore = [];
 
-function getHighScores () {
-   localHighScores = localStorage.getItem("high-scores");
 
-   if (localHighScores !== null) {
-      
-   }
-}
 
 var test = [
    {
@@ -38,6 +33,18 @@ var test = [
    }
 ];
 
+function getHighScores() {
+   var highScores = []
+   highScores = localStorage.getItem("high-scores");
+
+   if (highScores !== null) {
+      highScores = JSON.parse(highScores);
+      for (var i = 0; i < highScores.length; i++) {
+         localHighScores.push(highScores[i]);
+      }
+   }
+}
+
 function landing() {
    var pagePop = [];
 
@@ -59,8 +66,8 @@ function testPage() {
       return endPage();
    }
 
-   pagePop.push("<header><a href=#>High Scores</a>");
-   pagePop.push("<p id=timer>Time Left:</p></header>")
+   pagePop.push("<header>");
+   pagePop.push("<p id=timer>Time Left:</p></header>");
    pagePop.push("<main class=test>");
 
    var question = test[count].question;
@@ -89,7 +96,7 @@ function endPage() {
 
    pagePop.push("<main class=end-page>");
    pagePop.push("<h1>Great job, you completed this challenge and received a score of:</h1>");
-   pagePop.push("<h1 id=personal-score>Score</h1>");
+   pagePop.push("<h1 id=personal-score>" + timer + "</h1>");
    pagePop.push("<p>Enter your initials to save your score.</p>");
    pagePop.push("<input type=text id=initials name=initials>");
    pagePop.push("<input type=submit value=submit id=submit>");
@@ -97,38 +104,47 @@ function endPage() {
    pagePop.push("<button class=btn id=high-scores>High Scores</button></main>");
 
    pagePop = pagePop.join("");
-   document.body.innerHTML = pagePop
+   document.body.innerHTML = pagePop;
 
    initials = document.querySelector("#initials");
 };
 
 function highScoresPage() {
    var pagePop = [];
-   var highScores = [];
 
    pagePop.push("<main class=high-scores>");
    pagePop.push("<h1>Local High Scores:");
    pagePop.push("<ul id=high-score-list>");
 
-   highScores = localStorage.getItem("high-scores")
-   highScores = JSON.parse(highScores);
+   for (var i = 0; i < localHighScores.length; i++) {
+      pagePop.push("<li>" + localHighScores[i].initials + " " + localHighScores[i].score);
+   }
 
+   pagePop = pagePop.join("");
+   document.body.innerHTML = pagePop;
 };
 
-var timer = 90;
+var timer = 10;
 var time = null
 
 function startTime() {
-   time = setInterval(updateTime, 1000);
+   time = setInterval(timeInterval, 1000);
 };
 
-function updateTime() {
+var timeInterval = function updateTime() {
    $("#timer").html("Time Left: " + timer);
    timer--;
 
-   if (timer === 0) {
+   if (timer == 0) {
+      clearInterval(timeInterval);
+      retry();
       endPage();
    }
+};
+
+function retry() {
+   clearInterval(time);
+   count = 0;
 }
 
 $("body").on("click", "#start-btn", function () {
@@ -152,25 +168,34 @@ $("body").on("click", ".answer-btn", function (event) {
          testPage(count);
       }
    } else {
+      retry();
       endPage();
    }
 });
 
 $("body").on("click", "#try-again", function () {
-   count = 0;
-   clearInterval(updateTime);
+   retry();
+   startTime();
    testPage(count);
 });
 
-$("body").on("click", "#submit", function(){
+$("body").on("click", "#submit", function () {
    initials = $("#initials").val();
 
-   localHighScores = [{initials:initials, score:timer}];
+   userScore = {
+      name: initials,
+      score: timer
+   };
+   getHighScores();
+   localHighScores.push(userScore);
    localStorage.setItem("high-scores", JSON.stringify(localHighScores));
 
    alert("Data is saved. Thank you.");
 })
 
+$("body").on("click", "#high-score-btn", function () {
+   highScoresPage();
+})
 
 
 
