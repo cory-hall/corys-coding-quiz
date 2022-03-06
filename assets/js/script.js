@@ -1,11 +1,13 @@
+// global variables
 var count = 0;
 var initials = "";
 var score = null;
 var localHighScores = [];
 var userScore = [];
+var timer = 90;
+var time;
 
-
-
+// test questions
 var test = [
    {
       "question": "What are the three components to Web Development?",
@@ -33,18 +35,12 @@ var test = [
    }
 ];
 
+// function to get high scores from localStorage
 function getHighScores() {
-   var highScores = []
-   highScores = localStorage.getItem("high-scores");
-
-   if (highScores !== null) {
-      highScores = JSON.parse(highScores);
-      for (var i = 0; i < highScores.length; i++) {
-         localHighScores.push(highScores[i]);
-      }
-   }
+   localHighScores = JSON.parse(localStorage.getItem("high-scores"))
 }
 
+// function to populate the landing page
 function landing() {
    var pagePop = [];
 
@@ -59,6 +55,7 @@ function landing() {
    document.body.innerHTML = pagePop;
 };
 
+// function to populate the testing page
 function testPage() {
    var pagePop = [];
 
@@ -67,7 +64,7 @@ function testPage() {
    }
 
    pagePop.push("<header>");
-   pagePop.push("<p id=timer>Time Left:</p></header>");
+   pagePop.push("<p id=timer>Time left:</p></header>");
    pagePop.push("<main class=test>");
 
    var question = test[count].question;
@@ -88,117 +85,141 @@ function testPage() {
    pagePop = pagePop.join("");
    document.body.innerHTML = pagePop;
 
-
 };
 
+// function to populate the ending page
 function endPage() {
    var pagePop = [];
+
+   if (timer < 0) {
+      timer = 0;
+   }
 
    pagePop.push("<main class=end-page>");
    pagePop.push("<h1>Great job, you completed this challenge and received a score of:</h1>");
    pagePop.push("<h1 id=personal-score>" + timer + "</h1>");
    pagePop.push("<p>Enter your initials to save your score.</p>");
-   pagePop.push("<input type=text id=initials name=initials>");
-   pagePop.push("<input type=submit value=submit id=submit>");
+   pagePop.push("<div id=submit-score> <input type=text id=initials name=initials>");
+   pagePop.push("<input type=submit value=submit id=submit></div>");
    pagePop.push("<button class=btn id=try-again>Try Again</button>");
-   pagePop.push("<button class=btn id=high-scores>High Scores</button></main>");
+   pagePop.push("<button class=btn id=high-score-btn>High Scores</button></main>");
 
    pagePop = pagePop.join("");
    document.body.innerHTML = pagePop;
 
    initials = document.querySelector("#initials");
+   clearInterval(time);
 };
 
+// function to populate the high scores page
 function highScoresPage() {
    var pagePop = [];
 
    pagePop.push("<main class=high-scores>");
-   pagePop.push("<h1>Local High Scores:");
-   pagePop.push("<ul id=high-score-list>");
+   pagePop.push("<h1>Local High Scores:</h1>");
 
+
+   getHighScores();
    for (var i = 0; i < localHighScores.length; i++) {
-      pagePop.push("<li>" + localHighScores[i].initials + " " + localHighScores[i].score);
+      var name = localHighScores[i].name;
+      var score = localHighScores[i].score;
+
+      pagePop.push("<p>" + name + ": " + score + "</p><br>");
    }
 
+   pagePop.push("<button class=btn id=landing-page-btn>Go Back</button>")
    pagePop = pagePop.join("");
    document.body.innerHTML = pagePop;
 };
 
-var timer = 10;
-var time = null
-
+// function to start the countdown timer
 function startTime() {
-   time = setInterval(timeInterval, 1000);
+
+   time = setInterval(function () {
+      $("#timer").html("Time left: " + timer);
+      if (timer >= 1) {
+         timer--;
+      } else {
+         clearInterval(time);
+         endPage();
+      }
+   }, 1000);
 };
 
-var timeInterval = function updateTime() {
-   $("#timer").html("Time Left: " + timer);
-   timer--;
-
-   if (timer == 0) {
-      clearInterval(timeInterval);
-      retry();
-      endPage();
-   }
-};
-
+// function to reset timer and index for question array
 function retry() {
    clearInterval(time);
    count = 0;
+   timer = 90;
+   testPage(count);
 }
 
+// eventListener to start the test from landing page
 $("body").on("click", "#start-btn", function () {
    testPage(count);
+   retry();
    startTime();
-   console.log(count);
 });
 
+// eventListener to go to next test question
+// also houses logic for keeping test score
 $("body").on("click", ".answer-btn", function (event) {
 
    var selection = event.target.id;
    if (count < test.length) {
       if (selection == test[count].correctAnswer) {
-         alert("Correct");
+         alert("Correct!");
          count++;
          testPage(count);
       } else {
          timer = timer - 10;
-         alert("Wrong");
+         alert("Wrong, 10 points deducted from score.");
          count++;
          testPage(count);
       }
    } else {
-      retry();
       endPage();
    }
 });
 
+// eventListener to restart the quiz
 $("body").on("click", "#try-again", function () {
    retry();
    startTime();
-   testPage(count);
 });
 
+// eventListener to submit personal score to high scores
 $("body").on("click", "#submit", function () {
    initials = $("#initials").val();
 
-   userScore = {
-      name: initials,
-      score: timer
-   };
-   getHighScores();
-   localHighScores.push(userScore);
-   localStorage.setItem("high-scores", JSON.stringify(localHighScores));
+   if (initials !== null) {
+      userScore = {
+         name: initials,
+         score: timer
+      };
+      getHighScores();
+      localHighScores.push(userScore);
+      localStorage.setItem("high-scores", JSON.stringify(localHighScores));
 
-   alert("Data is saved. Thank you.");
-})
+      alert("Data is saved. Thank you.");
+      $("#initials").hide();
+      $("#submit").hide();
+      $("p").hide();
+   } else {
+      alert("Score not saved");
+   }
+});
 
+// eventListener to go to high scores page
 $("body").on("click", "#high-score-btn", function () {
    highScoresPage();
+   console.log(localHighScores);
 })
 
+$("body").on("click", "#landing-page-btn", function () {
+   landing();
+})
 
-
-
+// on page load, run landing function
 addEventListener("load", landing);
 
