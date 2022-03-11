@@ -35,10 +35,17 @@ var test = [
    }
 ];
 
-// function to get high scores from localStorage
-function getHighScores() {
-   localHighScores = JSON.parse(localStorage.getItem("high-scores"))
-}
+// // function to get high scores from localStorage
+// function getHighScores() {
+//    var localHighScores = JSON.parse(localStorage.getItem("high-scores"));
+
+//    if (localHighScores) {
+//       return localHighScores
+//    } else {
+//       localHighScores = [];
+//    }
+// }
+
 
 // function to populate the landing page
 function landing() {
@@ -120,12 +127,15 @@ function highScoresPage() {
 
 
    getHighScores();
-   for (var i = 0; i < localHighScores.length; i++) {
-      var name = localHighScores[i].name;
-      var score = localHighScores[i].score;
+   if (localHighScores) {
+      for (var i = 0; i < localHighScores.length; i++) {
+         var name = localHighScores[i].name;
+         var score = localHighScores[i].score;
 
-      pagePop.push("<p>" + name + ": " + score + "</p><br>");
+         pagePop.push("<p>" + name + ": " + score + "</p><br>");
+      }
    }
+
 
    pagePop.push("<button class=btn id=landing-page-btn>Go Back</button>")
    pagePop = pagePop.join("");
@@ -194,10 +204,9 @@ $("body").on("click", "#submit", function () {
 
    if (initials !== null) {
       userScore = {
-         name: initials,
-         score: timer
+         "name": initials,
+         "score": timer
       };
-      getHighScores();
       localHighScores.push(userScore);
       localStorage.setItem("high-scores", JSON.stringify(localHighScores));
 
@@ -210,10 +219,20 @@ $("body").on("click", "#submit", function () {
    }
 });
 
+// function to get high scores from localStorage
+function getHighScores() {
+   localHighScores = JSON.parse(localStorage.getItem("high-scores"));
+
+   if (localHighScores) {
+      return localHighScores
+   } else {
+      localHighScores = [];
+   }
+};
+
 // eventListener to go to high scores page
 $("body").on("click", "#high-score-btn", function () {
    highScoresPage();
-   console.log(localHighScores);
 })
 
 $("body").on("click", "#landing-page-btn", function () {
