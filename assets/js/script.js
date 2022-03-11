@@ -35,18 +35,6 @@ var test = [
    }
 ];
 
-// // function to get high scores from localStorage
-// function getHighScores() {
-//    var localHighScores = JSON.parse(localStorage.getItem("high-scores"));
-
-//    if (localHighScores) {
-//       return localHighScores
-//    } else {
-//       localHighScores = [];
-//    }
-// }
-
-
 // function to populate the landing page
 function landing() {
    var pagePop = [];
